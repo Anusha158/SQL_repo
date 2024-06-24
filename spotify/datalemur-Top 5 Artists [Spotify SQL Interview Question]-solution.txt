@@ -1,0 +1,12 @@
+with cte as(SELECT s.artist_id,count(*) as no_of_occurence
+from global_song_rank gsk join songs s on gsk.song_id=s.song_id
+where rank<=10
+group by s.artist_id
+
+),ranking as(
+select artist_id ,dense_rank()over(order by  no_of_occurence desc)as a_rank
+from cte )
+
+select a.artist_name,r.a_rank as artist_rank from ranking r join artists a on r.artist_id=a.artist_id
+where r.a_rank<=5
+order by r.a_rank ,a.artist_name
